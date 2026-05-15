@@ -20,7 +20,11 @@ import {
 	FileUploadTrigger,
 } from "#/components/ui-extended/file-upload";
 import { useCreateImageMutation } from "#/hooks/use-create-image-mutation.ts";
-import { FRAME_TYPES, type FrameTypeKey } from "#/lib/constants.ts";
+import {
+	FRAME_TYPES,
+	type FrameTypeKey,
+	frameAssetUrl,
+} from "#/lib/constants.ts";
 import { fileToDataUrl } from "#/lib/file-to-data-url.ts";
 import { Button } from "@/components/ui/button";
 import {
@@ -168,7 +172,7 @@ export function Home() {
 								<form.Field name="frameType">
 									{(field) => (
 										<>
-											<div className="grid gap-2">
+											<div className="grid gap-2 overflow-hidden">
 												<div className="flex items-center">
 													<Label>Select frame (hover previews)</Label>
 												</div>
@@ -179,59 +183,58 @@ export function Home() {
 													</span>
 												</p>
 
-												<div className="flex w-max items-center gap-4 pb-1">
-													{frameTypeEntries.map(([key, spec]) => {
-														const thumb = spec.images[0];
-														return (
-															<Tooltip key={key}>
-																<TooltipTrigger asChild>
-																	<button
-																		type="button"
-																		className={`rounded-md border p-2 shadow-xs transition-colors ${
-																			field.state.value === key
-																				? "ring-2 ring-primary ring-offset-2 ring-offset-background"
-																				: "opacity-90 hover:opacity-100"
-																		}`}
-																		onClick={() => field.handleChange(key)}
-																	>
-																		<img
-																			src={thumb}
-																			alt={spec.name}
-																			className="size-18 object-contain"
-																		/>
-																	</button>
-																</TooltipTrigger>
-																<TooltipContent
-																	side="top"
-																	className="max-w-none border bg-popover p-3 text-popover-foreground"
+												<div className="flex items-center gap-4 py-1 overflow-x-scroll no-scrollbar">
+													{frameTypeEntries.map(([key, spec]) => (
+														<Tooltip key={key}>
+															<TooltipTrigger asChild>
+																<button
+																	type="button"
+																	className={`rounded-md border p-2 min-w-fit shadow-xs transition-colors ${
+																		field.state.value === key
+																			? "ring-2 ring-primary ring-offset-2 ring-offset-background"
+																			: "opacity-90 hover:opacity-100"
+																	}`}
+																	onClick={() => field.handleChange(key)}
 																>
-																	<p className="mb-2 max-w-xs text-xs text-balance">
-																		<span className="font-medium">
-																			{spec.name}
-																		</span>
-																		<span className="text-muted-foreground">
-																			{" "}
-																			— {spec.description}
-																		</span>
-																	</p>
-																	<div className="flex gap-2">
-																		{spec.images.map((src) => (
-																			<div
-																				key={src}
-																				className="rounded border bg-background p-1.5"
-																			>
-																				<img
-																					src={src}
-																					alt=""
-																					className="size-16 object-contain"
-																				/>
-																			</div>
-																		))}
+																	<img
+																		src={frameAssetUrl(key, 1)}
+																		alt={spec.name}
+																		className="size-18 object-contain"
+																	/>
+																</button>
+															</TooltipTrigger>
+															<TooltipContent
+																side="top"
+																className="max-w-none border bg-popover p-3 text-popover-foreground"
+															>
+																<p className="mb-2 max-w-xs text-xs text-balance">
+																	<span className="font-medium">
+																		{spec.name}
+																	</span>
+																	<span className="text-muted-foreground">
+																		{" "}
+																		— {spec.description}
+																	</span>
+																</p>
+																<div className="flex gap-2">
+																	<div className="rounded border bg-background p-1.5">
+																		<img
+																			src={frameAssetUrl(key, 1)}
+																			alt=""
+																			className="size-16 object-contain"
+																		/>
 																	</div>
-																</TooltipContent>
-															</Tooltip>
-														);
-													})}
+																	<div className="rounded border bg-background p-1.5">
+																		<img
+																			src={frameAssetUrl(key, 2)}
+																			alt=""
+																			className="size-16 object-contain"
+																		/>
+																	</div>
+																</div>
+															</TooltipContent>
+														</Tooltip>
+													))}
 												</div>
 
 												{field.state.meta.errors[0] != null ? (

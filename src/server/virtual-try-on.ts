@@ -4,7 +4,11 @@
  */
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import { FRAME_TYPES, type FrameTypeKey } from "#/lib/constants.ts";
+import {
+	FRAME_TYPES,
+	type FrameTypeKey,
+	frameAssetUrl,
+} from "#/lib/constants.ts";
 import type {
 	Base64Image,
 	CreateImageInput,
@@ -156,17 +160,17 @@ export async function runVirtualTryOn(
 			`subject.${ext}`,
 		);
 
-		const frameImages = FRAME_TYPES[data.frameType].images;
 		const frameUrls: string[] = [];
-		for (const rel of frameImages) {
+		for (const variant of [1, 2] as const) {
+			const rel = frameAssetUrl(data.frameType, variant);
 			const abs = publicFilePath(rel);
 			const fileBuf = await readFile(abs);
 			const fname = path.basename(abs);
 			const frameUrl = await replicateUploadImage(
 				token,
 				fileBuf,
-				"image/png",
-				fname.endsWith(".png") ? fname : `${fname}.png`,
+				"image/webp",
+				fname.endsWith(".webp") ? fname : `${fname}.webp`,
 			);
 			frameUrls.push(frameUrl);
 		}
