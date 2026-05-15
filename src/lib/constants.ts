@@ -47,7 +47,15 @@ export const FRAME_TYPES = {
 
 export type FrameTypeKey = keyof typeof FRAME_TYPES;
 
+/** Referenced assets per frame folder (`1.webp`, `2.webp`, …). */
+export const FRAME_IMAGE_VARIANTS = [1, 2] as const;
+
+export type FrameImageVariant = (typeof FRAME_IMAGE_VARIANTS)[number];
+
 /** Public URL for a frame asset (`public/frames/...`). */
-export function frameAssetUrl(frameType: FrameTypeKey, variant: 1 | 2): string {
+export function frameAssetUrl(
+	frameType: FrameTypeKey,
+	variant: FrameImageVariant,
+): string {
 	return `/frames/${frameType}/${variant}.webp`;
 }

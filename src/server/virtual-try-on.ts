@@ -5,6 +5,7 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import {
+	FRAME_IMAGE_VARIANTS,
 	FRAME_TYPES,
 	type FrameTypeKey,
 	frameAssetUrl,
@@ -161,7 +162,7 @@ export async function runVirtualTryOn(
 		);
 
 		const frameUrls: string[] = [];
-		for (const variant of [1, 2] as const) {
+		for (const variant of FRAME_IMAGE_VARIANTS) {
 			const rel = frameAssetUrl(data.frameType, variant);
 			const abs = publicFilePath(rel);
 			const fileBuf = await readFile(abs);
