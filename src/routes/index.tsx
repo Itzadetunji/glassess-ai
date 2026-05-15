@@ -1,6 +1,8 @@
+"use client";
+
 import { useForm } from "@tanstack/react-form";
 import { createFileRoute } from "@tanstack/react-router";
-import { Upload, X } from "lucide-react";
+import { Loader2, Upload, X } from "lucide-react";
 import {
 	Tooltip,
 	TooltipContent,
@@ -17,7 +19,9 @@ import {
 	FileUploadList,
 	FileUploadTrigger,
 } from "#/components/ui-extended/file-upload";
+import { useCreateImageMutation } from "#/hooks/use-create-image-mutation.ts";
 import { FRAME_TYPES, type FrameTypeKey } from "#/lib/constants.ts";
+import { fileToDataUrl } from "#/lib/file-to-data-url.ts";
 import { Button } from "@/components/ui/button";
 import {
 	Card,
@@ -42,10 +46,21 @@ const defaultHomeFormValues: HomeFormValues = {
 };
 
 export function Home() {
+	const tryOn = useCreateImageMutation();
+
 	const form = useForm({
 		defaultValues: defaultHomeFormValues,
-		onSubmit: async () => {
-			// Hook for upload + auth flow later
+		onSubmit: async ({ value }) => {
+			if (!value.photo) return;
+			const imageDataUrl = await fileToDataUrl(value.photo);
+			try {
+				await tryOn.mutateAsync({
+					imageDataUrl,
+					frameType: value.frameType,
+				});
+			} catch {
+				// Error is exposed on tryOn.error for the UI
+			}
 		},
 	});
 
@@ -77,7 +92,7 @@ export function Home() {
 									name="photo"
 									validators={{
 										onSubmit: ({ value }) =>
-											value ? undefined : "Please upload a CSV file",
+											value ? undefined : "Please upload a photo",
 									}}
 								>
 									{(field) => (
@@ -89,7 +104,7 @@ export function Home() {
 												>
 													{(isSubmitting) => (
 														<FileUpload
-															maxFiles={2}
+															maxFiles={1}
 															maxSize={10 * 1024 * 1024}
 															accept=".jpg, .jpeg, .png"
 															className="w-full"
@@ -99,7 +114,7 @@ export function Home() {
 															onValueChange={(files: File[]) =>
 																field.handleChange(files[0] ?? null)
 															}
-															disabled={isSubmitting}
+															disabled={isSubmitting || tryOn.isPending}
 														>
 															<FileUploadDropzone className="py-3">
 																<div className="flex items-center gap-2">
@@ -230,18 +245,43 @@ export function Home() {
 								</form.Field>
 							</div>
 						</CardContent>
-						<CardFooter className="flex-col gap-2 pt-8">
+						<CardFooter className="flex-col gap-4 pt-8">
+							{tryOn.isSuccess && tryOn.data.status === "success" ? (
+								<div className="w-full space-y-2">
+									<p className="text-sm font-medium">Your try-on</p>
+									<img
+										src={tryOn.data.data.image}
+										alt="Generated glasses preview"
+										className="w-full max-h-80 rounded-md border object-contain bg-muted/30"
+									/>
+								</div>
+							) : null}
+							{tryOn.isError ? (
+								<p className="w-full text-sm text-destructive">
+									{tryOn.error.message}
+								</p>
+							) : null}
+							{tryOn.isPending ? (
+								<p className="w-full text-center text-xs text-muted-foreground">
+									Generating your preview—this can take a minute.
+								</p>
+							) : null}
 							<form.Subscribe selector={(state) => state.isSubmitting}>
 								{(isSubmitting) => (
-									<>
-										<Button
-											type="submit"
-											className="w-full"
-											disabled={isSubmitting}
-										>
-											Get
-										</Button>
-									</>
+									<Button
+										type="submit"
+										className="w-full"
+										disabled={isSubmitting || tryOn.isPending}
+									>
+										{isSubmitting || tryOn.isPending ? (
+											<>
+												<Loader2 className="size-4 animate-spin" />
+												Working…
+											</>
+										) : (
+											"Get preview"
+										)}
+									</Button>
 								)}
 							</form.Subscribe>
 						</CardFooter>

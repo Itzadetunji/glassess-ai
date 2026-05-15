@@ -1,0 +1,23 @@
+import { z } from "zod";
+import type { FrameTypeKey } from "#/lib/constants.ts";
+
+export type Base64Image = `data:image/${string};base64,${string}`;
+
+export type CreateImageResponse =
+	| {
+			status: "success";
+			message: string;
+			data: { image: Base64Image };
+	  }
+	| {
+			status: "error";
+			message: string;
+	  };
+
+/** Request body for `/api/virtual-try-on` */
+export const createImageInputSchema = z.object({
+	imageDataUrl: z.string().min(100, "Expected a non-empty image data URL"),
+	frameType: z.enum(["square", "rectangle"] satisfies readonly FrameTypeKey[]),
+});
+
+export type CreateImageInput = z.infer<typeof createImageInputSchema>;

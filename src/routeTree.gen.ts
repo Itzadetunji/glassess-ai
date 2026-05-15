@@ -10,33 +10,43 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiVirtualTryOnRouteImport } from './routes/api.virtual-try-on'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiVirtualTryOnRoute = ApiVirtualTryOnRouteImport.update({
+  id: '/api/virtual-try-on',
+  path: '/api/virtual-try-on',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/api/virtual-try-on': typeof ApiVirtualTryOnRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/api/virtual-try-on': typeof ApiVirtualTryOnRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/api/virtual-try-on': typeof ApiVirtualTryOnRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/api/virtual-try-on'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/api/virtual-try-on'
+  id: '__root__' | '/' | '/api/virtual-try-on'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ApiVirtualTryOnRoute: typeof ApiVirtualTryOnRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +58,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/virtual-try-on': {
+      id: '/api/virtual-try-on'
+      path: '/api/virtual-try-on'
+      fullPath: '/api/virtual-try-on'
+      preLoaderRoute: typeof ApiVirtualTryOnRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ApiVirtualTryOnRoute: ApiVirtualTryOnRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
