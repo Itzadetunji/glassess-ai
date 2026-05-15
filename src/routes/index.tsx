@@ -30,14 +30,14 @@ import {
 import { Label } from "@/components/ui/label";
 
 type HomeFormValues = {
-	csvFile: File | null;
+	photo: File | null;
 	frameType: FrameTypeKey;
 };
 
 const defaultFrameType = Object.keys(FRAME_TYPES)[0] as FrameTypeKey;
 
 const defaultHomeFormValues: HomeFormValues = {
-	csvFile: null,
+	photo: null,
 	frameType: defaultFrameType,
 };
 
@@ -74,7 +74,7 @@ export function Home() {
 						<CardContent>
 							<div className="flex flex-col gap-6">
 								<form.Field
-									name="csvFile"
+									name="photo"
 									validators={{
 										onSubmit: ({ value }) =>
 											value ? undefined : "Please upload a CSV file",
