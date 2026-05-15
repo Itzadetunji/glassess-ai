@@ -76,7 +76,7 @@ export function Home() {
 	return (
 		<TooltipProvider delayDuration={200}>
 			<div className="flex-1 flex flex-col items-center justify-center">
-				<Card className="relative w-full max-w-sm">
+				<Card className="relative w-full max-w-lg">
 					<CardHeader>
 						<CardTitle>Try Out New Glassess</CardTitle>
 						<CardDescription>
