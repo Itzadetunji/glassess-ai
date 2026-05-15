@@ -1,8 +1,6 @@
 import { useForm } from "@tanstack/react-form";
 import { createFileRoute } from "@tanstack/react-router";
 import { Upload, X } from "lucide-react";
-import { RadioGroup, RadioGroupItem } from "#/components/ui/radio-group";
-import { ScrollArea, ScrollBar } from "#/components/ui/scroll-area";
 import {
 	Tooltip,
 	TooltipContent,
@@ -155,28 +153,6 @@ export function Home() {
 								<form.Field name="frameType">
 									{(field) => (
 										<>
-											<RadioGroup
-												className="fixed top-4 right-4 z-300 flex flex-col gap-3 rounded-lg border bg-card p-3 shadow-md"
-												value={field.state.value}
-												onValueChange={(value) =>
-													field.handleChange(value as FrameTypeKey)
-												}
-											>
-												<span className="text-xs font-medium text-muted-foreground">
-													Frame style
-												</span>
-												{frameTypeEntries.map(([key, spec]) => (
-													<div key={key} className="flex items-center gap-2">
-														<RadioGroupItem value={key} id={`frame-${key}`} />
-														<Label
-															htmlFor={`frame-${key}`}
-															className="font-normal"
-														>
-															{spec.name}
-														</Label>
-													</div>
-												))}
-											</RadioGroup>
 											<div className="grid gap-2">
 												<div className="flex items-center">
 													<Label>Select frame (hover previews)</Label>
@@ -187,63 +163,62 @@ export function Home() {
 														{FRAME_TYPES[field.state.value].name}
 													</span>
 												</p>
-												<ScrollArea className="w-full">
-													<div className="flex w-max items-center gap-4 pb-1">
-														{frameTypeEntries.map(([key, spec]) => {
-															const thumb = spec.images[0];
-															return (
-																<Tooltip key={key}>
-																	<TooltipTrigger asChild>
-																		<button
-																			type="button"
-																			className={`rounded-md border p-2 shadow-xs transition-colors ${
-																				field.state.value === key
-																					? "ring-2 ring-primary ring-offset-2 ring-offset-background"
-																					: "opacity-90 hover:opacity-100"
-																			}`}
-																			onClick={() => field.handleChange(key)}
-																		>
-																			<img
-																				src={thumb}
-																				alt={spec.name}
-																				className="size-18 object-contain"
-																			/>
-																		</button>
-																	</TooltipTrigger>
-																	<TooltipContent
-																		side="top"
-																		className="max-w-none border bg-popover p-3 text-popover-foreground"
+
+												<div className="flex w-max items-center gap-4 pb-1">
+													{frameTypeEntries.map(([key, spec]) => {
+														const thumb = spec.images[0];
+														return (
+															<Tooltip key={key}>
+																<TooltipTrigger asChild>
+																	<button
+																		type="button"
+																		className={`rounded-md border p-2 shadow-xs transition-colors ${
+																			field.state.value === key
+																				? "ring-2 ring-primary ring-offset-2 ring-offset-background"
+																				: "opacity-90 hover:opacity-100"
+																		}`}
+																		onClick={() => field.handleChange(key)}
 																	>
-																		<p className="mb-2 max-w-xs text-xs text-balance">
-																			<span className="font-medium">
-																				{spec.name}
-																			</span>
-																			<span className="text-muted-foreground">
-																				{" "}
-																				— {spec.description}
-																			</span>
-																		</p>
-																		<div className="flex gap-2">
-																			{spec.images.map((src) => (
-																				<div
-																					key={src}
-																					className="rounded border bg-background p-1.5"
-																				>
-																					<img
-																						src={src}
-																						alt=""
-																						className="size-16 object-contain"
-																					/>
-																				</div>
-																			))}
-																		</div>
-																	</TooltipContent>
-																</Tooltip>
-															);
-														})}
-													</div>
-													<ScrollBar orientation="horizontal" />
-												</ScrollArea>
+																		<img
+																			src={thumb}
+																			alt={spec.name}
+																			className="size-18 object-contain"
+																		/>
+																	</button>
+																</TooltipTrigger>
+																<TooltipContent
+																	side="top"
+																	className="max-w-none border bg-popover p-3 text-popover-foreground"
+																>
+																	<p className="mb-2 max-w-xs text-xs text-balance">
+																		<span className="font-medium">
+																			{spec.name}
+																		</span>
+																		<span className="text-muted-foreground">
+																			{" "}
+																			— {spec.description}
+																		</span>
+																	</p>
+																	<div className="flex gap-2">
+																		{spec.images.map((src) => (
+																			<div
+																				key={src}
+																				className="rounded border bg-background p-1.5"
+																			>
+																				<img
+																					src={src}
+																					alt=""
+																					className="size-16 object-contain"
+																				/>
+																			</div>
+																		))}
+																	</div>
+																</TooltipContent>
+															</Tooltip>
+														);
+													})}
+												</div>
+
 												{field.state.meta.errors[0] != null ? (
 													<p className="text-sm text-destructive">
 														{String(field.state.meta.errors[0])}
