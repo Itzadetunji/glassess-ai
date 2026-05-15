@@ -14,7 +14,7 @@ export type CreateImageResponse =
 			message: string;
 	  };
 
-/** Request body for `/api/virtual-try-on` */
+/** Payload for `createImage` server function / `useCreateImageMutation` */
 export const createImageInputSchema = z.object({
 	imageDataUrl: z.string().min(100, "Expected a non-empty image data URL"),
 	frameType: z.enum(["square", "rectangle"] satisfies readonly FrameTypeKey[]),

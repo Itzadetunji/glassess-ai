@@ -6,6 +6,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { FRAME_TYPES, type FrameTypeKey } from "#/lib/constants.ts";
 import type {
+	Base64Image,
 	CreateImageInput,
 	CreateImageResponse,
 } from "#/lib/virtual-try-on-contract.ts";
@@ -110,7 +111,7 @@ function outputToImageUrl(output: unknown): string {
 	);
 }
 
-async function fetchUrlAsBase64Image(url: string): Promise<string> {
+async function fetchUrlAsBase64Image(url: string): Promise<Base64Image> {
 	const res = await fetch(url);
 	if (!res.ok) {
 		throw new Error(`Failed to fetch result image (${res.status})`);
@@ -118,7 +119,7 @@ async function fetchUrlAsBase64Image(url: string): Promise<string> {
 	const buf = Buffer.from(await res.arrayBuffer());
 	const mime =
 		res.headers.get("content-type")?.split(";")[0]?.trim() ?? "image/png";
-	return `data:${mime};base64,${buf.toString("base64")}`;
+	return `data:${mime};base64,${buf.toString("base64")}` as Base64Image;
 }
 
 function buildFluxPrompt(frameType: FrameTypeKey): string {
@@ -219,9 +220,7 @@ export async function runVirtualTryOn(
 		};
 	} catch (e) {
 		const message =
-			e instanceof Error
-				? e.message
-				: "Unknown error during image generation";
+			e instanceof Error ? e.message : "Unknown error during image generation";
 		return { status: "error", message };
 	}
 }

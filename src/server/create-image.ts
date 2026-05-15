@@ -1,13 +1,12 @@
 /**
  * Typed RPC wrapper for [`runVirtualTryOn`](./virtual-try-on.ts).
- *
- * Prefer calling `/api/virtual-try-on` from the client with Axios + React Query (`useCreateImageMutation`).
+ * Call from the client with `createImage({ data })` or via `useCreateImageMutation`.
  */
 import { createServerFn } from "@tanstack/react-start";
 import {
-	createImageInputSchema,
 	type Base64Image,
 	type CreateImageResponse,
+	createImageInputSchema,
 } from "#/lib/virtual-try-on-contract.ts";
 import { runVirtualTryOn } from "#/server/virtual-try-on.ts";
 
